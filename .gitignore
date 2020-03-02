@@ -48,3 +48,4 @@ playground/
 outputs/
 log
 .vscode/
+outputs/*

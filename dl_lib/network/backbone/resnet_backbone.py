@@ -3,8 +3,7 @@
 
 import torch.nn as nn
 import torchvision.models.resnet as resnet
-
-from .backbone import Backbone
+from detectron2.modeling import Backbone
 
 _resnet_mapper = {
     18: resnet.resnet18,
