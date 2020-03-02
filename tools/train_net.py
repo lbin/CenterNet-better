@@ -28,51 +28,18 @@ from detectron2.checkpoint import DetectionCheckpointer
 from dl_lib.data import MetadataCatalog
 from dl_lib.engine import (DefaultTrainer, default_argument_parser,
                            default_setup, hooks, launch)
-from dl_lib.evaluation import COCOEvaluator
-from detectron2.evaluation.evaluator import DatasetEvaluator
+from detectron2.evaluation import COCOEvaluator
+from detectron2.evaluation.evaluator import DatasetEvaluator, DatasetEvaluators
 from detectron2.evaluation.testing import verify_results
 from net import build_model
 
 
 class Trainer(DefaultTrainer):
-    """
-    We use the "DefaultTrainer" which contains a number pre-defined logic for
-    standard training workflow. They may not work for you, especially if you
-    are working on a new research project. In that case you can use the cleaner
-    "SimpleTrainer", or write your own training loop.
-    """
-
     @classmethod
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
-        """
-        Create evaluator(s) for a given dataset.
-        This uses the special metadata "evaluator_type" associated with each builtin dataset.
-        For your own dataset, you can simply create an evaluator manually in your
-        script and do not have to worry about the hacky if-else logic here.
-        """
         if output_folder is None:
             output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
-        evaluator_list = []
-        evaluator_type = MetadataCatalog.get(dataset_name).evaluator_type
-
-        if evaluator_type in ["coco", "coco_panoptic_seg"]:
-            evaluator_list.append(
-                COCOEvaluator(
-                    dataset_name, cfg, True,
-                    output_folder, dump=cfg.GLOBAL.DUMP_TRAIN
-                ))
-        elif evaluator_type == "pascal_voc":
-            return PascalVOCDetectionEvaluator(dataset_name)
-
-        if len(evaluator_list) == 0:
-            raise NotImplementedError(
-                "no Evaluator for the dataset {} with the type {}".format(
-                    dataset_name, evaluator_type
-                )
-            )
-        elif len(evaluator_list) == 1:
-            return evaluator_list[0]
-        return DatasetEvaluators(evaluator_list)
+        return COCOEvaluator(dataset_name, cfg, True, output_folder)
 
 
 def main(args):

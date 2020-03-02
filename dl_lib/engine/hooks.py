@@ -12,7 +12,7 @@ import torch
 
 import dl_lib.utils.comm as comm
 from detectron2.evaluation.testing import flatten_results_dict
-from dl_lib.nn_utils.precise_bn import get_bn_modules, update_bn_stats
+from fvcore.nn.precise_bn import get_bn_modules, update_bn_stats
 from dl_lib.utils.checkpoint import \
     PeriodicCheckpointer as _PeriodicCheckpointer
 from dl_lib.utils.events import EventStorage, EventWriter
