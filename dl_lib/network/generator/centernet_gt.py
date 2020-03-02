@@ -131,3 +131,4 @@ class CenterNetGT(object):
             masked_fmap = torch.max(masked_fmap, masked_gaussian * k)
             fmap[y - top:y + bottom, x - left:x + right] = masked_fmap
         # return fmap
+

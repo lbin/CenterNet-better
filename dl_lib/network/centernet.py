@@ -10,6 +10,36 @@ from detectron2.structures import Boxes, ImageList, Instances
 from .generator import CenterNetDecoder, CenterNetGT
 from .loss import modified_focal_loss, reg_l1_loss
 
+from dl_lib.network.backbone import Backbone
+from detectron2.layers import ShapeSpec
+from dl_lib.network import ResnetBackbone
+from dl_lib.network import CenternetDeconv
+from dl_lib.network import CenternetHead
+
+
+def build_backbone(cfg, input_shape=None):
+    """
+    Build a backbone.
+
+    Returns:
+        an instance of :class:`Backbone`
+    """
+    if input_shape is None:
+        input_shape = ShapeSpec(channels=len(cfg.MODEL.PIXEL_MEAN))
+
+    backbone = ResnetBackbone(cfg, input_shape)
+    assert isinstance(backbone, Backbone)
+    return backbone
+
+
+def build_upsample_layers(cfg, ):
+    upsample = CenternetDeconv(cfg)
+    return upsample
+
+
+def build_head(cfg, ):
+    head = CenternetHead(cfg)
+    return head
 
 class CenterNet(nn.Module):
     """
@@ -27,11 +57,11 @@ class CenterNet(nn.Module):
         # Inference parameters:
         self.max_detections_per_image = cfg.TEST.DETECTIONS_PER_IMAGE
         # fmt: on
-        self.backbone = cfg.build_backbone(
+        self.backbone = build_backbone(
             cfg, input_shape=ShapeSpec(channels=len(cfg.MODEL.PIXEL_MEAN))
         )
-        self.upsample = cfg.build_upsample_layers(cfg)
-        self.head = cfg.build_head(cfg)
+        self.upsample = build_upsample_layers(cfg)
+        self.head = build_head(cfg)
         # self.cls_head = cfg.build_cls_head(cfg)
         # self.wh_head = cfg.build_width_height_head(cfg)
         # self.reg_head = cfg.build_center_reg_head(cfg)
@@ -187,3 +217,8 @@ class CenterNet(nn.Module):
         images = [self.normalizer(img / 255) for img in images]
         images = ImageList.from_tensors(images, self.backbone.size_divisibility)
         return images
+
+def build_model(cfg):
+
+    model = CenterNet(cfg)
+    return model

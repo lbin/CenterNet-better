@@ -25,7 +25,7 @@ from detectron2.data import (MetadataCatalog, build_detection_test_loader,
 from detectron2.evaluation.evaluator import DatasetEvaluator, DatasetEvaluators, inference_context, inference_on_dataset
 from detectron2.evaluation.testing import verify_results, print_csv_format
 from fvcore.nn.precise_bn import get_bn_modules, update_bn_stats
-from dl_lib.network.net import build_model
+from dl_lib.network.centernet import build_model
 from dl_lib.solver import build_lr_scheduler, build_optimizer
 from detectron2.utils import comm
 from detectron2.utils.collect_env import collect_env_info
