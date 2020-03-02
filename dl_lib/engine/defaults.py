@@ -21,7 +21,7 @@ import dl_lib.data.transforms as T
 from detectron2.checkpoint import DetectionCheckpointer
 from dl_lib.data import (MetadataCatalog, build_detection_test_loader,
                          build_detection_train_loader)
-from dl_lib.evaluation import (DatasetEvaluator, inference_on_dataset,
+from detectron2.evaluation import (DatasetEvaluator, inference_on_dataset,
                                print_csv_format, verify_results)
 from dl_lib.nn_utils.precise_bn import get_bn_modules
 from dl_lib.solver import build_lr_scheduler, build_optimizer

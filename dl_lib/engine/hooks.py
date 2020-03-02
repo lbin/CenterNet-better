@@ -11,7 +11,7 @@ from collections import Counter
 import torch
 
 import dl_lib.utils.comm as comm
-from dl_lib.evaluation.testing import flatten_results_dict
+from detectron2.evaluation.testing import flatten_results_dict
 from dl_lib.nn_utils.precise_bn import get_bn_modules, update_bn_stats
 from dl_lib.utils.checkpoint import \
     PeriodicCheckpointer as _PeriodicCheckpointer

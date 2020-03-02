@@ -73,7 +73,7 @@ _config_dict = dict(
     SEED=-1,
     CUDNN_BENCHMARK=False,
     GLOBAL=dict(
-        DUMP_TRAIN=True,
+        DUMP_TRAIN=False,
         DUMP_TEST=False,
     ),
 )

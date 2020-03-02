@@ -23,7 +23,7 @@ from detectron2.structures import Boxes, BoxMode, pairwise_iou
 from dl_lib.utils.file_io import PathManager
 from dl_lib.utils.logger import create_small_table, create_table_with_header
 
-from .evaluator import DatasetEvaluator
+from detectron2.evaluation.evaluator import DatasetEvaluator
 
 
 class COCOEvaluator(DatasetEvaluator):
@@ -32,7 +32,7 @@ class COCOEvaluator(DatasetEvaluator):
     outputs using COCO's metrics and APIs.
     """
 
-    def __init__(self, dataset_name, cfg, distributed, output_dir=None, dump=False):
+    def __init__(self, dataset_name, cfg, distributed, output_dir=None):
         """
         Args:
             dataset_name (str): name of the dataset to be evaluated.
@@ -47,7 +47,6 @@ class COCOEvaluator(DatasetEvaluator):
                 Otherwise, will evaluate the results in the current process.
             output_dir (str): optional, an output directory to dump results.
         """
-        self._dump = dump
         self._tasks = self._tasks_from_config(cfg)
         self._distributed = distributed
         self._output_dir = output_dir
@@ -80,11 +79,6 @@ class COCOEvaluator(DatasetEvaluator):
         Returns:
             tuple[str]: tasks that can be evaluated under the given configuration.
         """
-        # @wangfeng02@megvii.com: next 4 line to a func
-        if self._dump:
-            with open("README.md", "w") as f:
-                name = cfg.OUTPUT_DIR.split("/")[-1]
-                f.write("# {}  \n".format(name))
 
         tasks = ("bbox",)
         if cfg.MODEL.MASK_ON:
@@ -284,8 +278,7 @@ class COCOEvaluator(DatasetEvaluator):
 
         results.update({"AP-" + name: ap for name, ap in results_per_category.items()})
 
-        if self._dump:
-            _dump_coco_eval_to_markdown(coco_eval, [small_table, table], iou_type)
+
         return results
 
 

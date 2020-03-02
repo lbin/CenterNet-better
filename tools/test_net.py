@@ -29,8 +29,9 @@ from detectron2.checkpoint import DetectionCheckpointer
 from dl_lib.data import MetadataCatalog
 from dl_lib.engine import (DefaultTrainer, default_argument_parser,
                            default_setup, launch)
-from dl_lib.evaluation import (COCOEvaluator, DatasetEvaluators,
-                               PascalVOCDetectionEvaluator, verify_results)
+from dl_lib.evaluation import COCOEvaluator
+from detectron2.evaluation.evaluator import DatasetEvaluator
+from detectron2.evaluation.testing import verify_results
 from net import build_model
 
 
@@ -59,7 +60,7 @@ class Trainer(DefaultTrainer):
             evaluator_list.append(
                 COCOEvaluator(
                     dataset_name, cfg, True,
-                    output_folder, dump=cfg.GLOBAL.DUMP_TEST
+                    output_folder
                 ))
 
         if evaluator_type == "pascal_voc":
