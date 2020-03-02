@@ -4,8 +4,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from dl_lib.layers import ShapeSpec
-from dl_lib.structures import Boxes, ImageList, Instances
+from detectron2.layers import ShapeSpec
+from detectron2.structures import Boxes, ImageList, Instances
 
 from .generator import CenterNetDecoder, CenterNetGT
 from .loss import modified_focal_loss, reg_l1_loss
@@ -131,7 +131,7 @@ class CenterNet(nn.Module):
     @torch.no_grad()
     def inference(self, images):
         """
-        image(tensor): ImageList in dl_lib.structures
+        image(tensor): ImageList in detectron2.structures
         """
         n, c, h, w = images.tensor.shape
         new_h, new_w = (h | 31) + 1, (w | 31) + 1

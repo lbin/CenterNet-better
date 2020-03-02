@@ -43,7 +43,7 @@ _config_dict = dict(
     ),
     TEST=dict(
         EXPECTED_RESULTS=[],
-        EVAL_PERIOD=0,
+        EVAL_PERIOD=1000,
         KEYPOINT_OKS_SIGMAS=[],
         DETECTIONS_PER_IMAGE=100,
         AUG=dict(

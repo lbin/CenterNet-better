@@ -1,5 +1,5 @@
 from dl_lib.network.backbone import Backbone
-from dl_lib.layers import ShapeSpec
+from detectron2.layers import ShapeSpec
 from dl_lib.network import ResnetBackbone
 from dl_lib.network import CenternetDeconv
 from dl_lib.network import CenternetHead

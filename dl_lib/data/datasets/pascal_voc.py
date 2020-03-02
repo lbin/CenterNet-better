@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 
 from dl_lib.data import DatasetCatalog, MetadataCatalog
-from dl_lib.structures import BoxMode
+from detectron2.structures import BoxMode
 from dl_lib.utils.file_io import PathManager
 
 __all__ = ["register_pascal_voc"]

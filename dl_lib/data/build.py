@@ -9,7 +9,7 @@ import numpy as np
 import torch.utils.data
 from tabulate import tabulate
 
-from dl_lib.structures import BoxMode
+from detectron2.structures import BoxMode
 from dl_lib.utils.comm import get_world_size
 from dl_lib.utils.env import seed_all_rng
 from dl_lib.utils.file_io import PathManager

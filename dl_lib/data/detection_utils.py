@@ -11,7 +11,7 @@ import numpy as np
 import torch
 from PIL import Image, ImageOps
 
-from dl_lib.structures import (BitMasks, Boxes, BoxMode,  # RotatedBoxes,
+from detectron2.structures import (BitMasks, Boxes, BoxMode,  # RotatedBoxes,
                                Instances, Keypoints, PolygonMasks)
 from dl_lib.utils.file_io import PathManager
 

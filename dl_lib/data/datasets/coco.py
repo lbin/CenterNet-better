@@ -10,7 +10,7 @@ import imagesize
 import numpy as np
 from PIL import Image
 
-from dl_lib.structures import Boxes, BoxMode, PolygonMasks
+from detectron2.structures import Boxes, BoxMode, PolygonMasks
 from dl_lib.utils.file_io import PathManager
 from dl_lib.utils.timer import Timer
 

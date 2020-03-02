@@ -19,7 +19,7 @@ from pycocotools.cocoeval import COCOeval
 import dl_lib.utils.comm as comm
 from dl_lib.data import MetadataCatalog
 from dl_lib.data.datasets.coco import convert_to_coco_json
-from dl_lib.structures import Boxes, BoxMode, pairwise_iou
+from detectron2.structures import Boxes, BoxMode, pairwise_iou
 from dl_lib.utils.file_io import PathManager
 from dl_lib.utils.logger import create_small_table, create_table_with_header
 
