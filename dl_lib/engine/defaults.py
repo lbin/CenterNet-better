@@ -25,6 +25,7 @@ from detectron2.data import (MetadataCatalog, build_detection_test_loader,
 from detectron2.evaluation.evaluator import DatasetEvaluator, DatasetEvaluators, inference_context, inference_on_dataset
 from detectron2.evaluation.testing import verify_results, print_csv_format
 from fvcore.nn.precise_bn import get_bn_modules, update_bn_stats
+from dl_lib.network.net import build_model
 from dl_lib.solver import build_lr_scheduler, build_optimizer
 from detectron2.utils import comm
 from detectron2.utils.collect_env import collect_env_info
@@ -37,10 +38,6 @@ from . import hooks
 from .train_loop import SimpleTrainer
 
 __all__ = ["default_argument_parser", "default_setup", "DefaultPredictor", "DefaultTrainer"]
-
-
-def build_model(cfg):
-    pass
 
 
 def default_argument_parser():
@@ -229,12 +226,13 @@ class DefaultTrainer(SimpleTrainer):
         trainer.train()
     """
 
-    def __init__(self, cfg, model):
+    def __init__(self, cfg):
         """
         Args:
             cfg (CfgNode):
         """
         # Assume these objects must be constructed in this order.
+        model = self.build_model(cfg)
         optimizer = self.build_optimizer(cfg.SOLVER.OPTIMIZER, model)
         data_loader = self.build_train_loader(cfg)
 
@@ -362,6 +360,19 @@ class DefaultTrainer(SimpleTrainer):
         if hasattr(self, "_last_eval_results") and comm.is_main_process():
             verify_results(self.cfg, self._last_eval_results)
             return self._last_eval_results
+
+    @classmethod
+    def build_model(cls, cfg):
+        """
+        Returns:
+            torch.nn.Module:
+        It now calls :func:`detectron2.modeling.build_model`.
+        Overwrite it if you'd like a different model.
+        """
+        model = build_model(cfg)
+        logger = logging.getLogger(__name__)
+        logger.info("Model:\n{}".format(model))
+        return model
 
     @classmethod
     def build_optimizer(cls, cfg, model):

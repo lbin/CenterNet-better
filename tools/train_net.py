@@ -23,7 +23,7 @@ sys.path.insert(0, '.')  # noqa: E402
 from colorama import Fore, Style
 
 from detectron2.utils import comm
-from config import config
+from dl_lib.network.config import config
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.data import MetadataCatalog
 from dl_lib.engine import (DefaultTrainer, default_argument_parser,
@@ -31,7 +31,7 @@ from dl_lib.engine import (DefaultTrainer, default_argument_parser,
 from detectron2.evaluation import COCOEvaluator
 from detectron2.evaluation.evaluator import DatasetEvaluator, DatasetEvaluators
 from detectron2.evaluation.testing import verify_results
-from net import build_model
+from dl_lib.network.net import build_model
 from dl_lib.data.dataset_mapper import DatasetMapper
 from detectron2.data import build_detection_test_loader, build_detection_train_loader
 class Trainer(DefaultTrainer):
@@ -53,7 +53,7 @@ class Trainer(DefaultTrainer):
 def main(args):
     config.merge_from_list(args.opts)
     cfg, logger = default_setup(config, args)
-    model = build_model(cfg)
+    # model = build_model(cfg)
     logger.info(f"Model structure: {model}")
     file_sys = os.statvfs(cfg.OUTPUT_DIR)
     free_space_Gb = (file_sys.f_bfree * file_sys.f_frsize) / 2**30
@@ -66,11 +66,9 @@ def main(args):
         DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
             cfg.MODEL.WEIGHTS, resume=args.resume
         )
-        res = Trainer.test(cfg, model)
+        res = Trainer.test(cfg)
         if comm.is_main_process():
             verify_results(cfg, res)
-        if cfg.TEST.AUG.ENABLED:
-            res.update(Trainer.test_with_TTA(cfg, model))
         return res
 
     """
@@ -86,6 +84,33 @@ def main(args):
 
     return trainer.train()
 
+def main(args):
+    config.merge_from_list(args.opts)
+    cfg, logger = default_setup(config, args)
+
+    if args.eval_only:
+        model = Trainer.build_model(cfg)
+        DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
+            cfg.MODEL.WEIGHTS, resume=args.resume
+        )
+        res = Trainer.test(cfg, model)
+        if comm.is_main_process():
+            verify_results(cfg, res)
+        if cfg.TEST.AUG.ENABLED:
+            res.update(Trainer.test_with_TTA(cfg, model))
+        return res
+
+    """
+    If you'd like to do anything fancier than the standard training logic,
+    consider writing your own training loop or subclassing the trainer.
+    """
+    trainer = Trainer(cfg)
+    trainer.resume_or_load(resume=args.resume)
+    if cfg.TEST.AUG.ENABLED:
+        trainer.register_hooks(
+            [hooks.EvalHook(0, lambda: trainer.test_with_TTA(cfg, trainer.model))]
+        )
+    return trainer.train()
 
 if __name__ == "__main__":
     args = default_argument_parser().parse_args()
