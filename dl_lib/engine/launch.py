@@ -5,7 +5,7 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
-from dl_lib.utils import comm
+from detectron2.utils import comm
 
 __all__ = ["launch"]
 

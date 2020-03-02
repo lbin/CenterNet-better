@@ -13,10 +13,10 @@ from PIL import Image, ImageOps
 
 from detectron2.structures import (BitMasks, Boxes, BoxMode,  # RotatedBoxes,
                                Instances, Keypoints, PolygonMasks)
-from dl_lib.utils.file_io import PathManager
+from fvcore.common.file_io import PathManager
 
 from . import transforms as T
-from .catalog import MetadataCatalog
+from detectron2.data import MetadataCatalog
 
 
 class SizeMismatchError(ValueError):

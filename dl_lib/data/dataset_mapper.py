@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from PIL import Image
 
-from dl_lib.utils.file_io import PathManager
+from fvcore.common.file_io import PathManager
 
 from . import detection_utils as utils
 from . import transforms as T

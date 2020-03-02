@@ -8,8 +8,8 @@ import weakref
 import numpy as np
 import torch
 
-import dl_lib.utils.comm as comm
-from dl_lib.utils.events import EventStorage
+from detectron2.utils import comm
+from detectron2.utils.events import EventStorage
 
 __all__ = ["HookBase", "TrainerBase", "SimpleTrainer"]
 

@@ -22,24 +22,32 @@ sys.path.insert(0, '.')  # noqa: E402
 
 from colorama import Fore, Style
 
-import dl_lib.utils.comm as comm
+from detectron2.utils import comm
 from config import config
 from detectron2.checkpoint import DetectionCheckpointer
-from dl_lib.data import MetadataCatalog
+from detectron2.data import MetadataCatalog
 from dl_lib.engine import (DefaultTrainer, default_argument_parser,
                            default_setup, hooks, launch)
 from detectron2.evaluation import COCOEvaluator
 from detectron2.evaluation.evaluator import DatasetEvaluator, DatasetEvaluators
 from detectron2.evaluation.testing import verify_results
 from net import build_model
-
-
+from dl_lib.data.dataset_mapper import DatasetMapper
+from detectron2.data import build_detection_test_loader, build_detection_train_loader
 class Trainer(DefaultTrainer):
     @classmethod
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
         if output_folder is None:
             output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
         return COCOEvaluator(dataset_name, cfg, True, output_folder)
+
+    @classmethod
+    def build_test_loader(cls, cfg, dataset_name):
+        return build_detection_test_loader(cfg, dataset_name, mapper=DatasetMapper(cfg, False))
+
+    @classmethod
+    def build_train_loader(cls, cfg):
+        return build_detection_train_loader(cfg, mapper=DatasetMapper(cfg, True))
 
 
 def main(args):

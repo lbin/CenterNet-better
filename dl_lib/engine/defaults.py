@@ -19,20 +19,19 @@ from torch.nn.parallel import DistributedDataParallel
 
 import dl_lib.data.transforms as T
 from detectron2.checkpoint import DetectionCheckpointer
-from dl_lib.data import (MetadataCatalog, build_detection_test_loader,
+from detectron2.data import (MetadataCatalog, build_detection_test_loader,
                          build_detection_train_loader)
 
 from detectron2.evaluation.evaluator import DatasetEvaluator, DatasetEvaluators, inference_context, inference_on_dataset
 from detectron2.evaluation.testing import verify_results, print_csv_format
 from fvcore.nn.precise_bn import get_bn_modules, update_bn_stats
 from dl_lib.solver import build_lr_scheduler, build_optimizer
-from dl_lib.utils import comm
-from dl_lib.utils.collect_env import collect_env_info
-from dl_lib.utils.env import seed_all_rng
-from dl_lib.utils.events import (CommonMetricPrinter, JSONWriter,
-                                 TensorboardXWriter)
-from dl_lib.utils.file_io import PathManager
-from dl_lib.utils.logger import setup_logger
+from detectron2.utils import comm
+from detectron2.utils.collect_env import collect_env_info
+from detectron2.utils.env import seed_all_rng
+from detectron2.utils.events import CommonMetricPrinter, JSONWriter, TensorboardXWriter
+from detectron2.utils.logger import setup_logger
+from fvcore.common.file_io import PathManager
 
 from . import hooks
 from .train_loop import SimpleTrainer
