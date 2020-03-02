@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from dl_lib.data.transforms.transform_gen import CenterAffine
+from dl_lib.transforms import CenterAffine
 
 
 def gather_feature(fmap, index, mask=None, use_transform=False):

@@ -24,20 +24,20 @@ sys.path.insert(0, '.')  # noqa: E402
 from collections import OrderedDict
 
 from detectron2.utils import comm
-from dl_lib.config import config
+from dl_lib.configs.config import config
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.data import MetadataCatalog
-from dl_lib.defaults import (DefaultTrainer, default_argument_parser,
-                           default_setup)
+from dl_lib.defaults import (DefaultTrainer2, default_setup)
+from detectron2.engine.defaults import default_argument_parser
 from detectron2.engine import hooks, SimpleTrainer, launch                    
 from detectron2.evaluation import COCOEvaluator
 from detectron2.evaluation.evaluator import DatasetEvaluator, DatasetEvaluators
 from detectron2.evaluation.testing import verify_results
 from dl_lib.centernet import build_model
-from dl_lib.data.dataset_mapper import DatasetMapper
+from dl_lib.dataset_mapper import DatasetMapper
 from detectron2.data import build_detection_test_loader, build_detection_train_loader
 
-class Trainer(DefaultTrainer):
+class Trainer(DefaultTrainer2):
     @classmethod
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
         if output_folder is None:
