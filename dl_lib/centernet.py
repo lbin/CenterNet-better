@@ -156,9 +156,9 @@ class CenterNet(nn.Module):
         # regression loss
         loss_reg = reg_l1_loss(pred_dict['reg'], mask, index, gt_dict['reg'])
 
-        loss_cls *= self.cfg.MODEL.LOSS.CLS_WEIGHT
-        loss_wh *= self.cfg.MODEL.LOSS.WH_WEIGHT
-        loss_reg *= self.cfg.MODEL.LOSS.REG_WEIGHT
+        loss_cls *= self.cfg.MODEL.CENTERNET.LOSS.CLS_WEIGHT
+        loss_wh *= self.cfg.MODEL.CENTERNET.LOSS.WH_WEIGHT
+        loss_reg *= self.cfg.MODEL.CENTERNET.LOSS.REG_WEIGHT
 
         loss = {
             "loss_cls": loss_cls,
