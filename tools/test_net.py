@@ -27,7 +27,7 @@ from detectron2.utils import comm
 from dl_lib.config import config
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.data import MetadataCatalog
-from dl_lib.engine import (DefaultTrainer, default_argument_parser,
+from dl_lib.defaults import (DefaultTrainer, default_argument_parser,
                            default_setup)
 from detectron2.engine import hooks, SimpleTrainer, launch                    
 from detectron2.evaluation import COCOEvaluator

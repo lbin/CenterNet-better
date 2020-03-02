@@ -26,7 +26,7 @@ from detectron2.utils import comm
 from dl_lib.config import config
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.data import MetadataCatalog
-from dl_lib.engine import (DefaultTrainer, default_argument_parser,
+from dl_lib.defaults import (DefaultTrainer, default_argument_parser,
                            default_setup)
 from detectron2.engine import hooks, SimpleTrainer, launch  
 from detectron2.evaluation import COCOEvaluator
@@ -50,40 +50,6 @@ class Trainer(DefaultTrainer):
     def build_train_loader(cls, cfg):
         return build_detection_train_loader(cfg, mapper=DatasetMapper(cfg, True))
 
-
-def main(args):
-    config.merge_from_list(args.opts)
-    cfg, logger = default_setup(config, args)
-    # model = build_model(cfg)
-    logger.info(f"Model structure: {model}")
-    file_sys = os.statvfs(cfg.OUTPUT_DIR)
-    free_space_Gb = (file_sys.f_bfree * file_sys.f_frsize) / 2**30
-    # We assume that a single dumped model is 700Mb
-    eval_space_Gb = (cfg.SOLVER.LR_SCHEDULER.MAX_ITER // cfg.SOLVER.CHECKPOINT_PERIOD) * 700 / 2**10
-    if eval_space_Gb > free_space_Gb:
-        logger.warning(f"{Fore.RED}Remaining space({free_space_Gb}GB) "
-                       f"is less than ({eval_space_Gb}GB){Style.RESET_ALL}")
-    if args.eval_only:
-        DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
-            cfg.MODEL.WEIGHTS, resume=args.resume
-        )
-        res = Trainer.test(cfg)
-        if comm.is_main_process():
-            verify_results(cfg, res)
-        return res
-
-    """
-    If you'd like to do anything fancier than the standard training logic,
-    consider writing your own training loop or subclassing the trainer.
-    """
-    trainer = Trainer(cfg, model)
-    trainer.resume_or_load(resume=args.resume)
-    if cfg.TEST.AUG.ENABLED:
-        trainer.register_hooks(
-            [hooks.EvalHook(0, lambda: trainer.test_with_TTA(cfg, trainer.model))]
-        )
-
-    return trainer.train()
 
 def main(args):
     config.merge_from_list(args.opts)
