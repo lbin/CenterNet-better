@@ -27,7 +27,8 @@ from dl_lib.network.config import config
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.data import MetadataCatalog
 from dl_lib.engine import (DefaultTrainer, default_argument_parser,
-                           default_setup, hooks, launch)
+                           default_setup)
+from detectron2.engine import hooks, SimpleTrainer, launch  
 from detectron2.evaluation import COCOEvaluator
 from detectron2.evaluation.evaluator import DatasetEvaluator, DatasetEvaluators
 from detectron2.evaluation.testing import verify_results

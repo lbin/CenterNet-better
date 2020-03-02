@@ -34,8 +34,8 @@ from detectron2.utils.events import CommonMetricPrinter, JSONWriter, Tensorboard
 from detectron2.utils.logger import setup_logger
 from fvcore.common.file_io import PathManager
 
-from . import hooks
-from .train_loop import SimpleTrainer
+from detectron2.engine import hooks, SimpleTrainer
+
 
 __all__ = ["default_argument_parser", "default_setup", "DefaultPredictor", "DefaultTrainer"]
 
