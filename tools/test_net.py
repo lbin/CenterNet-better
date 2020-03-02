@@ -63,11 +63,6 @@ def test_argument_parser():
 def main(args):
     config.merge_from_list(args.opts)
     cfg, logger = default_setup(config, args)
-    if args.debug:
-        batches = int(cfg.SOLVER.IMS_PER_BATCH / 8 * args.num_gpus)
-        if cfg.SOLVER.IMS_PER_BATCH != batches:
-            cfg.SOLVER.IMS_PER_BATCH = batches
-            logger.warning("SOLVER.IMS_PER_BATCH is changed to {}".format(batches))
 
     if "MODEL.WEIGHTS" in args.opts:
         valid_files = [cfg.MODEL.WEIGHTS]

@@ -380,12 +380,12 @@ def build_transform_gen(cfg, is_train):
     tfm_gens = []
 
     if is_train:
-        for (aug, args) in cfg.INPUT.AUG.TRAIN_PIPELINES:
+        for (aug, args) in cfg.MODEL.CENTERNET.TRAIN_PIPELINES:
             if aug == "ResizeShortestEdge":
                 check_sample_valid(args)
             tfm_gens.append(getattr(T, aug)(**args))
     else:
-        for (aug, args) in cfg.INPUT.AUG.TEST_PIPELINES:
+        for (aug, args) in cfg.MODEL.CENTERNET.TEST_PIPELINES:
             if aug == "ResizeShortestEdge":
                 check_sample_valid(args)
             tfm_gens.append(getattr(T, aug)(**args))

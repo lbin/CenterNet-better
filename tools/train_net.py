@@ -35,6 +35,10 @@ from detectron2.evaluation.testing import verify_results
 from dl_lib.centernet import build_model
 from dl_lib.dataset_mapper import DatasetMapper
 from detectron2.data import build_detection_test_loader, build_detection_train_loader
+
+from dl_lib.config import add_centernet_config
+from detectron2.config import get_cfg
+
 class Trainer(DefaultTrainer2):
     @classmethod
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
@@ -50,10 +54,23 @@ class Trainer(DefaultTrainer2):
     def build_train_loader(cls, cfg):
         return build_detection_train_loader(cfg, mapper=DatasetMapper(cfg, True))
 
+def setup(args):
+    """
+    Create configs and perform basic setups.
+    """
+    cfg = get_cfg()
+    add_centernet_config(cfg)
+    cfg.merge_from_file(args.config_file)
+    cfg.merge_from_list(args.opts)
+    cfg.freeze()
+    default_setup(cfg, args)
+    return cfg
 
 def main(args):
-    config.merge_from_list(args.opts)
-    cfg, logger = default_setup(config, args)
+    # config.merge_from_list(args.opts)
+    # cfg, logger = default_setup(config, args)
+
+    cfg = setup(args)
 
     if args.eval_only:
         model = Trainer.build_model(cfg)
@@ -63,8 +80,6 @@ def main(args):
         res = Trainer.test(cfg, model)
         if comm.is_main_process():
             verify_results(cfg, res)
-        if cfg.TEST.AUG.ENABLED:
-            res.update(Trainer.test_with_TTA(cfg, model))
         return res
 
     """
@@ -73,10 +88,7 @@ def main(args):
     """
     trainer = Trainer(cfg)
     trainer.resume_or_load(resume=args.resume)
-    if cfg.TEST.AUG.ENABLED:
-        trainer.register_hooks(
-            [hooks.EvalHook(0, lambda: trainer.test_with_TTA(cfg, trainer.model))]
-        )
+
     return trainer.train()
 
 if __name__ == "__main__":

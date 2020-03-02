@@ -7,7 +7,7 @@ import torch.nn as nn
 from detectron2.layers import ShapeSpec
 from detectron2.structures import Boxes, ImageList, Instances
 from .centernet_decode import CenterNetDecoder
-from .centernet_gt import  CenterNetGT
+from .centernet_gt import CenterNetGT
 from dl_lib.loss import modified_focal_loss, reg_l1_loss
 
 # from dl_lib.network.backbone import Backbone
@@ -16,9 +16,14 @@ from detectron2.layers import ShapeSpec
 from .resnet_backbone import ResnetBackbone
 from .centernet_deconv import CenternetDeconv
 from .centernet_head import CenternetHead
+from detectron2.modeling.meta_arch.build import META_ARCH_REGISTRY
+from detectron2.modeling.backbone.build import BACKBONE_REGISTRY
+from detectron2.modeling.backbone import build_backbone
+__all__ = ["CenterNet"]
 
 
-def build_backbone(cfg, input_shape=None):
+@BACKBONE_REGISTRY.register()
+def build_torch_backbone(cfg, input_shape=None):
     """
     Build a backbone.
 
@@ -42,6 +47,8 @@ def build_head(cfg, ):
     head = CenternetHead(cfg)
     return head
 
+
+@META_ARCH_REGISTRY.register()
 class CenterNet(nn.Module):
     """
     Implement CenterNet (https://arxiv.org/abs/1904.07850).
@@ -59,8 +66,7 @@ class CenterNet(nn.Module):
         self.max_detections_per_image = cfg.TEST.DETECTIONS_PER_IMAGE
         # fmt: on
         self.backbone = build_backbone(
-            cfg, input_shape=ShapeSpec(channels=len(cfg.MODEL.PIXEL_MEAN))
-        )
+            cfg, input_shape=ShapeSpec(channels=len(cfg.MODEL.PIXEL_MEAN)))
         self.upsample = build_upsample_layers(cfg)
         self.head = build_head(cfg)
         # self.cls_head = cfg.build_cls_head(cfg)
@@ -71,9 +77,16 @@ class CenterNet(nn.Module):
         # feature_shapes = [backbone_shape[f] for f in self.in_features]
 
         self.mean, self.std = cfg.MODEL.PIXEL_MEAN, cfg.MODEL.PIXEL_STD
-        pixel_mean = torch.Tensor(self.mean).to(self.device).view(3, 1, 1)
-        pixel_std = torch.Tensor(self.std).to(self.device).view(3, 1, 1)
+        # pixel_mean = torch.Tensor(self.mean).to(self.device).view(3, 1, 1)
+        # pixel_std = torch.Tensor(self.std).to(self.device).view(3, 1, 1)
+        # self.normalizer = lambda x: (x - pixel_mean) / pixel_std
+
+        pixel_mean = torch.Tensor(cfg.MODEL.PIXEL_MEAN).to(self.device).view(
+            3, 1, 1)
+        pixel_std = torch.Tensor(cfg.MODEL.PIXEL_STD).to(self.device).view(
+            3, 1, 1)
         self.normalizer = lambda x: (x - pixel_mean) / pixel_std
+
         self.to(self.device)
 
     def forward(self, batched_inputs):
@@ -169,12 +182,14 @@ class CenterNet(nn.Module):
         center_wh = np.array([w // 2, h // 2], dtype=np.float32)
         size_wh = np.array([new_w, new_h], dtype=np.float32)
         down_scale = self.cfg.MODEL.CENTERNET.DOWN_SCALE
-        img_info = dict(center=center_wh, size=size_wh,
+        img_info = dict(center=center_wh,
+                        size=size_wh,
                         height=new_h // down_scale,
                         width=new_w // down_scale)
 
         pad_value = [-x / y for x, y in zip(self.mean, self.std)]
-        aligned_img = torch.Tensor(pad_value).reshape((1, -1, 1, 1)).expand(n, c, new_h, new_w)
+        aligned_img = torch.Tensor(pad_value).reshape(
+            (1, -1, 1, 1)).expand(n, c, new_h, new_w)
         aligned_img = aligned_img.to(images.tensor.device)
 
         pad_w, pad_h = math.ceil((new_w - w) / 2), math.ceil((new_h - h) / 2)
@@ -216,8 +231,10 @@ class CenterNet(nn.Module):
         """
         images = [x["image"].to(self.device) for x in batched_inputs]
         images = [self.normalizer(img / 255) for img in images]
-        images = ImageList.from_tensors(images, self.backbone.size_divisibility)
+        images = ImageList.from_tensors(images,
+                                        self.backbone.size_divisibility)
         return images
+
 
 def build_model(cfg):
 
