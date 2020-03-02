@@ -24,7 +24,7 @@ from colorama import Fore, Style
 
 import dl_lib.utils.comm as comm
 from config import config
-from dl_lib.checkpoint import DetectionCheckpointer
+from detectron2.checkpoint import DetectionCheckpointer
 from dl_lib.data import MetadataCatalog
 from dl_lib.engine import (DefaultTrainer, default_argument_parser,
                            default_setup, hooks, launch)

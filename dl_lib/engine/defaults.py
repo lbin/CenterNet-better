@@ -18,7 +18,7 @@ import torch
 from torch.nn.parallel import DistributedDataParallel
 
 import dl_lib.data.transforms as T
-from dl_lib.checkpoint import DetectionCheckpointer
+from detectron2.checkpoint import DetectionCheckpointer
 from dl_lib.data import (MetadataCatalog, build_detection_test_loader,
                          build_detection_train_loader)
 from dl_lib.evaluation import (DatasetEvaluator, inference_on_dataset,

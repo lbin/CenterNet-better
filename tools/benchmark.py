@@ -14,7 +14,7 @@ import torch
 import tqdm
 from torch.nn.parallel import DistributedDataParallel
 
-from dl_lib.checkpoint import DetectionCheckpointer
+from detectron2.checkpoint import DetectionCheckpointer
 from dl_lib.config import get_cfg
 from dl_lib.data import (DatasetFromList, build_detection_test_loader,
                          build_detection_train_loader)

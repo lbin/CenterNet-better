@@ -59,7 +59,7 @@ _config_dict = dict(
             SUBDIVISION=1,
             MOMENTUM=0.9,
         ),
-        CHECKPOINT_PERIOD=5000,
+        CHECKPOINT_PERIOD=1000,
         IMS_PER_BATCH=16,
     ),
     TEST=dict(
