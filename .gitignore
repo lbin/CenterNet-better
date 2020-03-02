@@ -45,5 +45,6 @@ tools/dl_test
 tools/dl_train
 playground/
 *.pth
-output
+outputs/
+log
 .vscode/
