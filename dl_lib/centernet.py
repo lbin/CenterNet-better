@@ -6,16 +6,16 @@ import torch.nn as nn
 
 from detectron2.layers import ShapeSpec
 from detectron2.structures import Boxes, ImageList, Instances
-
-from .generator import CenterNetDecoder, CenterNetGT
-from .loss import modified_focal_loss, reg_l1_loss
+from .centernet_decode import CenterNetDecoder
+from .centernet_gt import  CenterNetGT
+from dl_lib.loss import modified_focal_loss, reg_l1_loss
 
 # from dl_lib.network.backbone import Backbone
 from detectron2.modeling import Backbone
 from detectron2.layers import ShapeSpec
-from dl_lib.network import ResnetBackbone
-from dl_lib.network import CenternetDeconv
-from dl_lib.network import CenternetHead
+from .resnet_backbone import ResnetBackbone
+from .centernet_deconv import CenternetDeconv
+from .centernet_head import CenternetHead
 
 
 def build_backbone(cfg, input_shape=None):

@@ -25,8 +25,8 @@ from detectron2.data import (MetadataCatalog, build_detection_test_loader,
 from detectron2.evaluation.evaluator import DatasetEvaluator, DatasetEvaluators, inference_context, inference_on_dataset
 from detectron2.evaluation.testing import verify_results, print_csv_format
 from fvcore.nn.precise_bn import get_bn_modules, update_bn_stats
-from dl_lib.network.centernet import build_model
-from dl_lib.solver import build_lr_scheduler, build_optimizer
+from dl_lib.centernet import build_model
+from detectron2.solver import build_lr_scheduler, build_optimizer
 from detectron2.utils import comm
 from detectron2.utils.collect_env import collect_env_info
 from detectron2.utils.env import seed_all_rng
@@ -233,7 +233,7 @@ class DefaultTrainer(SimpleTrainer):
         """
         # Assume these objects must be constructed in this order.
         model = self.build_model(cfg)
-        optimizer = self.build_optimizer(cfg.SOLVER.OPTIMIZER, model)
+        optimizer = self.build_optimizer(cfg, model)
         data_loader = self.build_train_loader(cfg)
 
         # For training, wrap with DDP. But don't need this for inference.
@@ -243,7 +243,7 @@ class DefaultTrainer(SimpleTrainer):
             )
         super().__init__(model, data_loader, optimizer)
 
-        self.scheduler = self.build_lr_scheduler(cfg.SOLVER.LR_SCHEDULER, optimizer)
+        self.scheduler = self.build_lr_scheduler(cfg, optimizer)
         # Assume no other objects need to be checkpointed.
         # We can later make it checkpoint the stateful hooks
         self.checkpointer = DetectionCheckpointer(
@@ -254,7 +254,7 @@ class DefaultTrainer(SimpleTrainer):
             scheduler=self.scheduler,
         )
         self.start_iter = 0
-        self.max_iter = cfg.SOLVER.LR_SCHEDULER.MAX_ITER
+        self.max_iter = cfg.SOLVER.MAX_ITER
         self.cfg = cfg
 
         self.register_hooks(self.build_hooks())

@@ -24,7 +24,7 @@ sys.path.insert(0, '.')  # noqa: E402
 from collections import OrderedDict
 
 from detectron2.utils import comm
-from dl_lib.network.config import config
+from dl_lib.config import config
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.data import MetadataCatalog
 from dl_lib.engine import (DefaultTrainer, default_argument_parser,
@@ -33,7 +33,7 @@ from detectron2.engine import hooks, SimpleTrainer, launch
 from detectron2.evaluation import COCOEvaluator
 from detectron2.evaluation.evaluator import DatasetEvaluator, DatasetEvaluators
 from detectron2.evaluation.testing import verify_results
-from dl_lib.network.centernet import build_model
+from dl_lib.centernet import build_model
 from dl_lib.data.dataset_mapper import DatasetMapper
 from detectron2.data import build_detection_test_loader, build_detection_train_loader
 
